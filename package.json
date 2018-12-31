@@ -1,6 +1,6 @@
 {
     "name": "node-gocardless-billin",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "NodeJS SDK for gocardless.com API",
     "main": "dist/index.js",
     "scripts": {
