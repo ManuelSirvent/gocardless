@@ -15,6 +15,7 @@
     "author": "Manuel Sirvent",
     "license": "MIT",
     "dependencies": {
+        "babel-preset-stage-3": "^6.24.1",
         "bluebird": "2.10.2",
         "request": "2.65.0"
     },
