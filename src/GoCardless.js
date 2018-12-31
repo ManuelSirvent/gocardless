@@ -10,14 +10,15 @@ var pRequest = function (options) {
     });
 };
 
-function buildOptions(token, endPoint, path, method, body = {}) {
+function buildOptions(token, endPoint, path, method, body = {}, headersExtra = {}) {
     return {
         uri: endPoint + path,
         headers: {
             Authorization: `Bearer ${token}`,
             Accept: 'application/json',
             'GoCardless-Version': '2015-07-06',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            ...headersExtra
         },
         body,
         method,
@@ -26,11 +27,10 @@ function buildOptions(token, endPoint, path, method, body = {}) {
 }
 
 function goCardlessRedirectRequest(options) {
-    return pRequest(options)
-        .then((response) => {
-            if (!response.body.redirect_flows) throw response.body;
-            else return response.body;
-        });
+    return pRequest(options).then(response => {
+        if (!response.body.redirect_flows) throw response.body;
+        else return response.body;
+    });
 }
 
 function goCardlessRequest(options) {
@@ -42,15 +42,14 @@ function yyyymmdd(date) {
     var yyyy = date.getFullYear().toString();
     var mm = (date.getMonth() + 1).toString(); // getMonth() is zero-based
     var dd = date.getDate().toString();
-    return `${yyyy}-${(mm[1] ? mm : `0${mm[0]}`)}-${(dd[1] ? dd : `0${dd[0]}`)}`; // padding
+    return `${yyyy}-${mm[1] ? mm : `0${mm[0]}`}-${dd[1] ? dd : `0${dd[0]}`}`; // padding
 }
 
 export default class GoCardless {
-
     constructor(config) {
-        this.endPoint = config.sandbox ?
-            'https://api-sandbox.gocardless.com' :
-            'https://api.gocardless.com';
+        this.endPoint = config.sandbox
+            ? 'https://api-sandbox.gocardless.com'
+            : 'https://api.gocardless.com';
         if (!config.token) throw new Error('missing config.token');
         this.token = config.token;
     }
@@ -107,8 +106,18 @@ export default class GoCardless {
      * @param description human readable description sent to payer
      * @param metadata any data up to 3 pairs of key-values
      * @param internalReference your own internal reference
+     * @param idempotencyKey If you make a request with an Idempotency-Key header, we only allow that key to be used for a single successful request.
      */
-    createPayment(mandateID, amount, currency = 'EUR', chargeDate = null, description = null, metadata = null, internalReference = null) {
+    createPayment(
+        mandateID,
+        amount,
+        currency = 'EUR',
+        chargeDate = null,
+        description = null,
+        metadata = null,
+        internalReference = null,
+        idempotencyKey = null
+    ) {
         const body = {
             payments: {
                 amount,
@@ -124,7 +133,8 @@ export default class GoCardless {
         };
         const path = '/payments';
         const method = 'POST';
-        const options = buildOptions(this.token, this.endPoint, path, method, body);
+        const headersExtra = idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {};
+        const options = buildOptions(this.token, this.endPoint, path, method, body, headersExtra);
         return goCardlessRequest(options);
     }
 

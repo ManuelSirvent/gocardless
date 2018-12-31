@@ -1,1 +1,6 @@
-{ "extends": ["cubyn"] }
+{
+    "extends": ["cubyn"],
+    "rules": {
+        "linebreak-style": 0
+    }
+}
