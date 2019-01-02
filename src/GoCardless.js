@@ -106,7 +106,7 @@ export default class GoCardless {
      * @param description human readable description sent to payer
      * @param metadata any data up to 3 pairs of key-values
      * @param internalReference your own internal reference
-     * @param idempotencyKey If you make a request with an Idempotency-Key header, we only allow that key to be used for a single successful request.
+     * @param idempotencyKey If you make a request for a single successful request.
      */
     createPayment(
         mandateID,
