@@ -1,15 +1,9 @@
 {
-    "presets": [],
+    "presets": ["stage-3"],
     "plugins": [
         "transform-es2015-parameters",
         "transform-es2015-block-scoping",
-        [
-            "transform-es2015-modules-commonjs",
-            { "strict": false }
-        ]
+        ["transform-es2015-modules-commonjs", { "strict": false }]
     ],
-    ignore: [
-        "dist/*",
-        "node_modules/"
-    ]
+    "ignore": ["dist/*", "node_modules/"]
 }
